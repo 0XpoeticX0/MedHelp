@@ -32,6 +32,7 @@ export const initializeDB = async () => {
 
     if (admin.length === 0) {
       const password = process.env.ADMIN_PASSWORD || "";
+      const adminEmail = process.env.ADMIN_EMAIL || "";
       const adminPassword = await bcrypt.hash(password, 12);
       await pool.query(
         `INSERT INTO users (id, firstName, lastName, email, age, gender, phone, address, role, password) 
@@ -40,7 +41,7 @@ export const initializeDB = async () => {
           generateId(),
           "Admin",
           "User",
-          "admin@medHelp.com",
+          adminEmail,
           30,
           "male",
           "1234567890",

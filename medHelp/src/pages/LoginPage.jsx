@@ -38,6 +38,13 @@ const LoginPage = () => {
         navigate("/");
       } else {
         message.error(response.data.message || "Login failed");
+        Swal.fire({
+          position: "center",
+          icon: "error",
+          title: response.data.data.message || "Login failed",
+          showConfirmButton: false,
+          timer: 1500,
+        });
       }
     } catch (error) {
       message.error(error.response?.data?.message || "Something went wrong");

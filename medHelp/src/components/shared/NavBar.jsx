@@ -5,7 +5,7 @@ import { MenuOutlined } from "@ant-design/icons";
 import { Link, NavLink, useLocation } from "react-router";
 import { getUserFromToken, logout } from "../../utils/auth.js";
 import Swal from "sweetalert2";
-import { LogIn, LogOut } from "lucide-react";
+import { Hospital, LogIn, LogOut } from "lucide-react";
 
 const NavBar = () => {
   const [visible, setVisible] = useState(false);
@@ -43,11 +43,7 @@ const NavBar = () => {
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
             <Link to="/" className="flex items-center">
-              <img
-                src="https://assets.grok.com/users/2c61054b-87b9-42dd-b6e9-b1e4ce6d4e9c/xbrV6C7PDQWx3KQs-generated_image.jpg"
-                alt="medHelp logo"
-                className="h-10 w-auto" // Added size constraints
-              />
+              <Hospital className="text-blue-600" />
               {/* Optional: Add text beside logo */}
               <span className="ml-2 text-2xl font-bold text-blue-600 hidden sm:inline">
                 medHelp
@@ -78,15 +74,23 @@ const NavBar = () => {
 
           <div className="hidden md:block">
             {user?.email ? (
-              <Button
-                color="danger"
-                variant="solid"
-                onClick={handleLogout}
-                className="flex items-center gap-3 "
-              >
-                <LogOut />
-                Log out
-              </Button>
+              <div className="flex items-center space-x-4">
+                <Button
+                  color="danger"
+                  variant="outline"
+                  onClick={handleLogout}
+                  className="flex items-center gap-3 "
+                >
+                  <LogOut />
+                </Button>
+                <NavLink to={`/dashboard/${user?.role}/profile`}>
+                  <img
+                    src={"/user.svg"}
+                    alt={user?.name}
+                    className="w-12 h-12 rounded-full object-cover border-2 border-gray-600"
+                  />
+                </NavLink>
+              </div>
             ) : (
               <NavLink to="/login">
                 <Button type="primary" className="flex items-center gap-3">
@@ -127,6 +131,11 @@ const NavBar = () => {
             ),
           }))}
         />
+        <div className="text-center border border-gray-400 hover:bg-blue-200 hover:text-white p-2 rounded-md">
+          <NavLink to={`/dashboard/${user?.role}/profile`}>
+            Go to DashBoard
+          </NavLink>
+        </div>
         <div className="flex justify-center mt-4">
           {user?.email ? (
             <Button
