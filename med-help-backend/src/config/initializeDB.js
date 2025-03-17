@@ -25,6 +25,21 @@ export const initializeDB = async () => {
     `);
     console.log("✅ Users table created or already exists.");
 
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS trainers (
+        id VARCHAR(100) NOT NULL PRIMARY KEY,
+        fullname VARCHAR(255) NOT NULL,
+        age INT CHECK (age > 18),
+        qualifications TEXT NOT NULL,
+        bloodType VARCHAR(10) NOT NULL,
+        address VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL UNIQUE,
+        phoneNo VARCHAR(20) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+    console.log("✅ Trainers table created or already exists.");
+
     // Check if admin already exists
     const [admin] = await pool.query(
       `SELECT * FROM users WHERE role = 'admin' LIMIT 1;`

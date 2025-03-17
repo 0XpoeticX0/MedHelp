@@ -1,5 +1,11 @@
+import AddTrainerForm from "../../components/form/AddTrainerForm";
+
 const AddTrainers = () => {
-  return <div className="">This is AddTrainers page.</div>;
+  return (
+    <div className="py-8">
+      <AddTrainerForm />
+    </div>
+  );
 };
 
 export default AddTrainers;
