@@ -19,6 +19,7 @@ export const initializeDB = async () => {
         address VARCHAR(255) NOT NULL,
         role ENUM('patient', 'admin', 'volunteer') NOT NULL,
         password VARCHAR(255) NOT NULL,
+        isBlocked BOOLEAN DEFAULT FALSE,
         UNIQUE(email, role),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
@@ -39,6 +40,19 @@ export const initializeDB = async () => {
       );
     `);
     console.log("✅ Trainers table created or already exists.");
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS courses (
+        id VARCHAR(100) NOT NULL PRIMARY KEY,
+        courseName VARCHAR(255) NOT NULL,
+        trainer VARCHAR(100) NOT NULL,
+        startDate DATE NOT NULL,
+        duration INT NOT NULL CHECK (duration > 0),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (trainer) REFERENCES trainers(id) ON DELETE CASCADE
+      );
+    `);
+    console.log("✅ Courses table created or already exists.");
 
     // Check if admin already exists
     const [admin] = await pool.query(

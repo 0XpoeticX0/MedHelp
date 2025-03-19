@@ -68,6 +68,10 @@ export const loginUser = async (req) => {
 
     const user = rows[0];
 
+    if (getUsers.isBlocked) {
+      return { success: false, message: "User is blocked" };
+    }
+
     // Compare the password
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
@@ -83,6 +87,7 @@ export const loginUser = async (req) => {
       phone: user.phone,
       email: user.email,
       role: user.role,
+      status: user.isBlocked,
     };
 
     const accessToken = jwtHelpers.generateToken(
@@ -104,12 +109,64 @@ export const loginUser = async (req) => {
 };
 
 // Get all users
-export const getUsers = async () => {
-  const query = "SELECT id, name, email FROM users";
+export const getUsers = async (req) => {
+  const { role } = req.query;
+
+  if (!role) {
+    throw new Error("Role is required");
+  }
+
+  const query = `SELECT * FROM users WHERE role = ?`;
+
   try {
-    const [rows] = await db.execute(query);
+    const [rows] = await db.execute(query, [role]);
     return rows;
   } catch (error) {
+    console.error("❌ Error fetching users:", error.message);
+    throw error;
+  }
+};
+
+// Delete User
+export const deleteUser = async (req) => {
+  const { id } = req.params;
+
+  const query = `DELETE FROM users WHERE id = ?`;
+
+  try {
+    const [result] = await db.execute(query, [id]);
+
+    return { id, affectedRows: result.affectedRows };
+  } catch (error) {
+    console.error("❌ Error deleting user:", error.message);
+    throw error;
+  }
+};
+
+// Toggle Block Status
+export const toggleBlockStatus = async (req) => {
+  const { id } = req.params;
+
+  // Get current block status
+  const getStatusQuery = `SELECT isBlocked FROM users WHERE id = ?`;
+  const updateQuery = `UPDATE users SET isBlocked = ? WHERE id = ?`;
+
+  try {
+    const [rows] = await db.execute(getStatusQuery, [id]);
+
+    if (rows.length === 0) {
+      throw new Error("User not found");
+    }
+
+    const currentStatus = rows[0].isBlocked;
+    const newStatus = !currentStatus;
+
+    // Update status
+    const [result] = await db.execute(updateQuery, [newStatus, id]);
+
+    return { id, isBlocked: newStatus, affectedRows: result.affectedRows };
+  } catch (error) {
+    console.error("❌ Error toggling block status:", error.message);
     throw error;
   }
 };

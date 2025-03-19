@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { Form, Input, Button, Typography, message } from "antd";
+import { Form, Input, Button, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { Link, useNavigate } from "react-router";
 import axiosClient from "../api/axiosClient";
 import Swal from "sweetalert2";
-
-const { Title } = Typography;
+import { Hospital } from "lucide-react";
 
 const LoginPage = () => {
   const [loading, setLoading] = useState(false);
@@ -54,13 +53,16 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="flex w-full max-w-4xl shadow-lg rounded-lg overflow-hidden">
+    <div className="md:min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="flex items-center w-full max-w-5xl shadow-lg rounded-lg overflow-hidden">
         {/* Left Section - Login Form */}
-        <div className="w-full md:w-1/2 bg-white p-8">
-          <Title level={2} className="text-center mb-6">
-            medHelp Login
-          </Title>
+        <div className="w-full md:w-1/2 bg-gray-100 p-8">
+          <div className="flex text-blue-600 justify-center items-center my-8 gap-3">
+            <Hospital />
+            <h2 className="text-3xl font-semibold text-center">
+              Med Help Login
+            </h2>
+          </div>
 
           <Form layout="vertical" onFinish={handleSubmit} className="space-y-4">
             {/* Email Input */}
@@ -129,7 +131,7 @@ const LoginPage = () => {
         {/* Right Section - Illustration */}
         <div className="hidden md:block w-1/2 bg-blue-50">
           <img
-            src="https://assets.grok.com/users/2c61054b-87b9-42dd-b6e9-b1e4ce6d4e9c/xbrV6C7PDQWx3KQs-generated_image.jpg"
+            src="/Computer login-bro.png"
             alt="medHelp Login Illustration"
             className="w-full h-full object-cover"
           />

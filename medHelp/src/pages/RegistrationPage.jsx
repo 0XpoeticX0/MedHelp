@@ -9,6 +9,7 @@ import {
   Users,
   EyeOff,
   Eye,
+  Hospital,
 } from "lucide-react";
 import { useUserStore } from "../stores/userStore";
 import Swal from "sweetalert2";
@@ -49,23 +50,25 @@ const RegistrationPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="flex w-full max-w-7xl shadow-lg rounded-lg overflow-hidden">
+    <div className="h-[calc(100vh-7px)] flex items-center justify-center bg-gray-100">
+      <div className="flex max-w-7xl shadow-2xl overflow-hidden gap-5">
         {/* Left Section - Form */}
-        <div className="hidden md:block w-1/2 relative bg-gradient-to-r from-blue-50 to-blue-100">
+        <div className="hidden md:block w-1/2">
           <img
-            src="https://i.ibb.co.com/ZRDmrbwh/medhelp.jpg"
+            src="/Sign up-amico.png"
             alt="Registration Illustration"
             className="h-full"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-blue-50 via-transparent to-blue-100 opacity-60" />
         </div>
 
         {/* Right Section - Image */}
         <div className="w-full md:w-1/2 bg-white p-8">
-          <h2 className="text-3xl font-semibold text-center mb-6">
-            medHelp Registration
-          </h2>
+          <div className="flex text-blue-600 justify-center items-center my-8 gap-3">
+            <Hospital />
+            <h2 className="text-3xl font-semibold text-center">
+              Med Help Registration
+            </h2>
+          </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="flex gap-4">

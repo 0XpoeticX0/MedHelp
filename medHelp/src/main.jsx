@@ -18,11 +18,21 @@ import ManageCourse from "./pages/admin/ManageCourse.jsx";
 import Course from "./pages/volunteer/Course.jsx";
 import Certificate from "./pages/volunteer/Certificate.jsx";
 import History from "./pages/patient/History.jsx";
+import HomePage from "./pages/HomePage.jsx";
+import Courses from "./pages/Courses.jsx";
+import Services from "./pages/Services.jsx";
+import Contact from "./pages/Contact.jsx";
+import About from "./pages/About.jsx";
 
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <Routes>
       <Route path="/" element={<App />}>
+        <Route index element={<HomePage />} />
+        <Route path="courses" element={<Courses />} />
+        <Route path="services" element={<Services />} />
+        <Route path="contact" element={<Contact />} />
+        <Route path="about" element={<About />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
       </Route>

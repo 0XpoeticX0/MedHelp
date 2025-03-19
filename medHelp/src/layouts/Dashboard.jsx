@@ -157,17 +157,21 @@ const Dashboard = () => {
             collapsed={collapsed}
             className="min-h-screen"
           >
-            <div className="demo-logo-vertical" />
-            <div className="text-white h-[6rem] items-center flex justify-between border-b-2 mb-2">
-              <h1
-                className={`text-lg font-semibold flex ${
-                  collapsed ? "flex-col justify-center text-center text-xs" : ""
-                } items-center gap-3 p-4`}
-              >
-                {collapsed ? <Hospital size={16} /> : <Hospital size={24} />}
-                Med Help
-              </h1>
-            </div>
+            <NavLink to="/">
+              <div className="demo-logo-vertical" />
+              <div className="text-white h-[6rem] items-center flex justify-between border-b-2 mb-2">
+                <h1
+                  className={`text-lg font-semibold flex ${
+                    collapsed
+                      ? "flex-col justify-center text-center text-xs"
+                      : ""
+                  } items-center gap-3 p-4`}
+                >
+                  {collapsed ? <Hospital size={16} /> : <Hospital size={24} />}
+                  Med Help
+                </h1>
+              </div>
+            </NavLink>
 
             <Menu
               theme="dark"

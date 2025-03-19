@@ -4,10 +4,12 @@ import NavBar from "./components/shared/NavBar";
 function App() {
   return (
     <div className="text-black">
-      <div className="">
+      <div className="top-0 sticky z-10">
         <NavBar />
       </div>
-      <Outlet />
+      <div className="container mx-auto">
+        <Outlet />
+      </div>
     </div>
   );
 }

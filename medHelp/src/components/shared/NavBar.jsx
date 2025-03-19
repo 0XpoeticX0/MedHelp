@@ -27,33 +27,36 @@ const NavBar = () => {
   };
 
   const menuItems = [
-    { key: "/", label: "Home", path: "/" },
-    { key: "/about", label: "About", path: "/about" },
+    { key: "/courses", label: "Courses", path: "/courses" },
     { key: "/services", label: "Services", path: "/services" },
-    { key: "/contact", label: "Contact", path: "/contact" },
+    { key: "/contact", label: "Contact us", path: "/contact" },
+    { key: "/about", label: "About us", path: "/about" },
   ];
 
   const showDrawer = () => setVisible(true);
   const onClose = () => setVisible(false);
 
   return (
-    <nav className="bg-white shadow-lg">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav className="container mx-auto bg-white shadow-lg">
+      <div className="sm:px-6">
         <div className="flex justify-between h-16 items-center">
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
             <Link to="/" className="flex items-center">
               <Hospital className="text-blue-600" />
               {/* Optional: Add text beside logo */}
-              <span className="ml-2 text-2xl font-bold text-blue-600 hidden sm:inline">
-                medHelp
+              <span className="ml-2 md:text-2xl font-bold text-blue-600">
+                Med Help
               </span>
             </Link>
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-1">
+          <div className="hidden md:flex items-center space-x-3">
             <Menu
+              style={{
+                width: "25rem",
+              }}
               theme="light"
               mode="horizontal"
               selectedKeys={[location.pathname]}
@@ -131,22 +134,30 @@ const NavBar = () => {
             ),
           }))}
         />
-        <div className="text-center border border-gray-400 hover:bg-blue-200 hover:text-white p-2 rounded-md">
-          <NavLink to={`/dashboard/${user?.role}/profile`}>
-            Go to DashBoard
-          </NavLink>
-        </div>
         <div className="flex justify-center mt-4">
           {user?.email ? (
-            <Button
-              color="danger"
-              variant="solid"
-              onClick={handleLogout}
-              className="flex items-center gap-3 "
-            >
-              <LogOut />
-              Log out
-            </Button>
+            <div className="flex gap-10">
+              <NavLink to={`/dashboard/${user?.role}/profile`}>
+                <Button
+                  color="primary"
+                  variant="solid"
+                  onClick={handleLogout}
+                  className="flex items-center gap-3 "
+                >
+                  Go to Profile
+                </Button>
+              </NavLink>
+
+              <Button
+                color="danger"
+                variant="solid"
+                onClick={handleLogout}
+                className="flex items-center gap-3 "
+              >
+                <LogOut />
+                Log out
+              </Button>
+            </div>
           ) : (
             <NavLink to="/login">
               <Button type="primary" className="flex items-center gap-3">

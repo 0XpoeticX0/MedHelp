@@ -1,6 +1,7 @@
 import db from "../config/db.js";
 import { generateId } from "../utils/generateId.js";
 import pool from "../config/db.js";
+
 export const createTrainer = async (req) => {
   const { fullname, age, qualifications, bloodType, address, email, phoneNo } =
     req.body;
