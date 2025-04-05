@@ -3,6 +3,7 @@ import { generateId } from "../utils/generateId.js";
 import bcrypt from "bcrypt";
 import { jwtHelpers } from "../utils/jwtHelpers.js";
 import dotenv from "dotenv";
+import { haversineDistance } from "../utils/haversineDistance.js";
 
 dotenv.config();
 
@@ -167,6 +168,126 @@ export const toggleBlockStatus = async (req) => {
     return { id, isBlocked: newStatus, affectedRows: result.affectedRows };
   } catch (error) {
     console.error("❌ Error toggling block status:", error.message);
+    throw error;
+  }
+};
+
+export const updateVolunteerAvailability = async (
+  volunteerId,
+  isAvailable,
+  latitude,
+  longitude
+) => {
+  const query = `
+    INSERT INTO volunteer_availability (volunteer_id, is_available, latitude, longitude)
+    VALUES (?, ?, ?, ?)
+    ON DUPLICATE KEY UPDATE
+      is_available = VALUES(is_available),
+      latitude = VALUES(latitude),
+      longitude = VALUES(longitude),
+      updated_at = CURRENT_TIMESTAMP;
+  `;
+
+  try {
+    const [result] = await db.execute(query, [
+      volunteerId,
+      isAvailable,
+      latitude,
+      longitude,
+    ]);
+    return { affectedRows: result.affectedRows };
+  } catch (error) {
+    console.error("❌ Error updating availability:", error.message);
+    throw error;
+  }
+};
+
+export const getVolunteerAvailability = async (volunteerId) => {
+  const query = `
+    SELECT * FROM volunteer_availability WHERE volunteer_id = ?;
+  `;
+
+  try {
+    const [rows] = await db.execute(query, [volunteerId]);
+    return rows[0]; // Return the first row if exists
+  } catch (error) {
+    console.error("❌ Error fetching availability:", error.message);
+    throw error;
+  }
+};
+
+export const seekHelp = async (latitude, longitude, patient_id) => {
+  const query = `
+    INSERT INTO helps (id, patient_id, latitude, longitude)
+    VALUES (?, ?, ?, ?);
+  `;
+
+  try {
+    const helpId = generateId();
+    const [result] = await db.execute(query, [
+      helpId,
+      patient_id,
+      latitude,
+      longitude,
+    ]);
+
+    return { id: helpId, affectedRows: result.affectedRows };
+  } catch (error) {
+    console.error("❌ Error seeking help:", error.message);
+    throw error;
+  }
+};
+
+export const getHelpForVolunteer = async (volunteerId) => {
+  if (!volunteerId) {
+    return res.status(400).json({ error: "Missing volunteerId parameter" });
+  }
+
+  try {
+    // Query to get the volunteer's location from the volunteer_availability table
+    const [volunteerLocation] = await db.query(
+      `
+      SELECT latitude, longitude
+      FROM volunteer_availability
+      WHERE volunteer_id = ?
+    `,
+      [volunteerId]
+    );
+
+    if (volunteerLocation.length === 0) {
+      return res.status(404).json({ error: "Volunteer not found" });
+    }
+
+    const { latitude: volunteerLat, longitude: volunteerLon } =
+      volunteerLocation[0];
+
+    // Query to get all helps with patient location that are not yet assigned to a volunteer
+    const [helps] = await db.query(`
+      SELECT id, patient_id, latitude, longitude, status
+      FROM helps
+      WHERE volunteer_id IS NULL
+    `);
+
+    // Filter helps that are within 5 km of the volunteer's location
+    const nearbyHelps = helps.filter((help) => {
+      const distance = haversineDistance(
+        parseFloat(volunteerLat),
+        parseFloat(volunteerLon),
+        parseFloat(help.latitude),
+        parseFloat(help.longitude)
+      );
+
+      return distance <= 5; // Only include helps within 5 km
+    });
+
+    if (nearbyHelps.length === 0) {
+      return res.status(404).json({ message: "No helps found within 5km." });
+    }
+
+    // Return the list of nearby helps
+    return nearbyHelps;
+  } catch (error) {
+    console.error("❌ Error fetching help:", error.message);
     throw error;
   }
 };

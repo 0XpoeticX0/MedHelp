@@ -1,15 +1,7 @@
-import {
-  Layout,
-  Button,
-  Card,
-  Row,
-  Col,
-  Typography,
-  Space,
-  Avatar,
-} from "antd";
-import { Heart, User, Stethoscope, Phone, ArrowRight } from "lucide-react";
+import { Layout, Button, Card, Row, Col, Typography, Avatar } from "antd";
+import { Heart, User, Stethoscope, Phone } from "lucide-react";
 import { Link } from "react-router"; // Assuming you're using React Router
+import HelpSection from "../components/module/home/HelpSection";
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -18,31 +10,7 @@ const HomePage = () => {
   return (
     <div className="container mx-auto">
       <Content className="bg-gray-100 py-16">
-        <div className="container mx-auto text-center">
-          <Title
-            level={1}
-            className="text-4xl md:text-5xl font-bold text-gray-800 mb-4"
-          >
-            Saving Lives, One Beat at a Time
-          </Title>
-          <Text className="text-lg text-gray-600 block mb-8">
-            Learn CPR, get first aid support, and join our mission to empower
-            communities with life-saving skills.
-          </Text>
-          <Space size="middle">
-            <Button
-              type="primary"
-              size="large"
-              className="bg-red-500 border-red-500"
-              icon={<ArrowRight size={20} />}
-            >
-              <Link to="/">Get Help Now</Link>
-            </Button>
-            <Button size="large" className="border-red-500 text-red-500">
-              <Link to="/register">Become a Volunteer</Link>
-            </Button>
-          </Space>
-        </div>
+        <HelpSection />
       </Content>
 
       {/* About Section */}

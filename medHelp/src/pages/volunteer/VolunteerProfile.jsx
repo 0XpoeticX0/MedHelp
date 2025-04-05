@@ -1,8 +1,81 @@
 import ProfileCard from "../../components/card/ProfileCard";
-import { Card, Col, Row, Statistic, Timeline, Avatar } from "antd";
+import {
+  Card,
+  Col,
+  Row,
+  Statistic,
+  Timeline,
+  Avatar,
+  Button,
+  message,
+  Tag,
+} from "antd";
 import { Clock, Heart, Users, Calendar, CheckCircle } from "lucide-react";
+// import { useNavigate } from "react-router";
+import axiosClient from "../../api/axiosClient";
+import Swal from "sweetalert2";
+import { useEffect, useState } from "react";
+import { SyncOutlined } from "@ant-design/icons";
 
 const VolunteerProfile = () => {
+  // const navigate = useNavigate();
+
+  const [isAvailable, setIsAvailable] = useState();
+
+  const handleProvideService = (value) => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+
+          try {
+            const res = await axiosClient.post("/users/availability", {
+              isAvailable: value,
+              latitude,
+              longitude,
+            });
+
+            if (res.statusText === "OK") {
+              setIsAvailable(value);
+              Swal.fire({
+                position: "center",
+                icon: "success",
+                title: res.data.message,
+              });
+            } else {
+              message.error("No volunteers available.");
+            }
+          } catch (err) {
+            console.error(err);
+            message.error("Error sending location.");
+          }
+        },
+        (error) => {
+          console.error("Location error:", error);
+          message.error("Could not get your location. Please enable GPS.");
+        }
+      );
+    } else {
+      message.error("Geolocation not supported by your browser.");
+    }
+  };
+
+  useEffect(() => {
+    const fetchAvailability = async () => {
+      try {
+        const response = await axiosClient.get("/users/availability");
+        setIsAvailable(response.data.is_available);
+      } catch (error) {
+        console.error("Error fetching availability:", error);
+      }
+    };
+
+    fetchAvailability();
+  }, [isAvailable]);
+
+  const helps = axiosClient.get("/users/help-for-volunteer");
+  console.log(helps.data);
+
   return (
     <div className="mx-auto container py-8 px-4">
       <Row gutter={[16, 16]}>
@@ -33,6 +106,39 @@ const VolunteerProfile = () => {
                   hope, a burst of joy, and a true hero in action. Keep rocking
                   it—we’re so grateful for YOU!&quot;
                 </p>
+              </div>
+              <div className="">
+                {isAvailable === "notAvailable" ? (
+                  <Button
+                    onClick={() => handleProvideService("inService")}
+                    variant="outlined"
+                    color="green"
+                    className="mt-4"
+                  >
+                    Available For Service
+                  </Button>
+                ) : (
+                  <>
+                    {isAvailable === "available" ? (
+                      <Tag
+                        className="mt-4"
+                        color="yellow"
+                        icon={<SyncOutlined spin />}
+                      >
+                        In Service...
+                      </Tag>
+                    ) : (
+                      <Button
+                        onClick={() => handleProvideService("notAvailable")}
+                        variant="outlined"
+                        color="orange"
+                        className="mt-4"
+                      >
+                        Go to offline
+                      </Button>
+                    )}
+                  </>
+                )}
               </div>
             </div>
           </Card>
@@ -80,7 +186,7 @@ const VolunteerProfile = () => {
               boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
             }}
           >
-            <h3 className="text-lg font-semibold mb-4">Recent Activities</h3>
+            <h3 className="text-lg font-semibold mb-4">Need Help</h3>
             <Timeline
               items={[
                 {

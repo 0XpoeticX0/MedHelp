@@ -42,6 +42,19 @@ export const initializeDB = async () => {
     console.log("✅ Trainers table created or already exists.");
 
     await pool.query(`
+     CREATE TABLE IF NOT EXISTS volunteer_availability (
+  volunteer_id VARCHAR(100) PRIMARY KEY,
+  is_available ENUM('available', 'notAvailable', 'inService') DEFAULT 'notAvailable',
+  latitude DECIMAL(10, 6),
+  longitude DECIMAL(10, 6),
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (volunteer_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+    `);
+    console.log("✅ Volunteer_availability table created or already exists.");
+
+    await pool.query(`
       CREATE TABLE IF NOT EXISTS courses (
         id VARCHAR(100) NOT NULL PRIMARY KEY,
         courseName VARCHAR(255) NOT NULL,
@@ -53,6 +66,21 @@ export const initializeDB = async () => {
       );
     `);
     console.log("✅ Courses table created or already exists.");
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS helps (
+        id VARCHAR(100) PRIMARY KEY,  
+        patient_id VARCHAR(100),
+        latitude DECIMAL(10, 6),
+        longitude DECIMAL(10, 6),
+        status ENUM('pending', 'assigned', 'completed') DEFAULT 'pending',
+        volunteer_id VARCHAR(100),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (volunteer_id) REFERENCES users(id) ON DELETE SET NULL 
+      );
+    `);
+    console.log("✅ Helps table created or already exists.");
 
     // Check if admin already exists
     const [admin] = await pool.query(
