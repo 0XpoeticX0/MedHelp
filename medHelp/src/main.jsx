@@ -23,6 +23,7 @@ import Courses from "./pages/Courses.jsx";
 import Services from "./pages/Services.jsx";
 import Contact from "./pages/Contact.jsx";
 import About from "./pages/About.jsx";
+import AddVolunteer from "./pages/admin/AddVolunteer.jsx";
 
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
@@ -41,6 +42,7 @@ createRoot(document.getElementById("root")).render(
           <Route path="profile" element={<AdminProfile />} />
           <Route path="add-trainer" element={<AddTrainers />} />
           <Route path="all-trainers" element={<ManageTrainer />} />
+          <Route path="add-volunteer" element={<AddVolunteer />} />
           <Route path="manage-volunteers" element={<ManageVolunteer />} />
           <Route path="manage-patients" element={<ManagePatient />} />
           <Route path="add-course" element={<AddCourse />} />

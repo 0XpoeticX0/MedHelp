@@ -6,6 +6,7 @@ import { Link, NavLink, useLocation } from "react-router";
 import { getUserFromToken, logout } from "../../utils/auth.js";
 import Swal from "sweetalert2";
 import { Hospital, LogIn, LogOut } from "lucide-react";
+import { menuItems } from "../constant/index.js";
 
 const NavBar = () => {
   const [visible, setVisible] = useState(false);
@@ -26,18 +27,11 @@ const NavBar = () => {
     window.location.reload();
   };
 
-  const menuItems = [
-    { key: "/courses", label: "Courses", path: "/courses" },
-    { key: "/services", label: "Services", path: "/services" },
-    { key: "/contact", label: "Contact us", path: "/contact" },
-    { key: "/about", label: "About us", path: "/about" },
-  ];
-
   const showDrawer = () => setVisible(true);
   const onClose = () => setVisible(false);
 
   return (
-    <nav className="container mx-auto bg-white shadow-lg">
+    <nav className="bg-white shadow-lg">
       <div className="sm:px-6">
         <div className="flex justify-between h-16 items-center">
           {/* Logo */}

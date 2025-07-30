@@ -7,7 +7,7 @@ function App() {
       <div className="top-0 sticky z-10">
         <NavBar />
       </div>
-      <div className="container mx-auto">
+      <div className="">
         <Outlet />
       </div>
     </div>

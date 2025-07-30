@@ -20,21 +20,30 @@ export const createUser = async (req) => {
     password,
   } = req.body;
 
-  const query = `
+  console.log(req.body);
+
+  const findEmailQuery = `
+    SELECT * FROM users WHERE email = ? AND role = ?;
+  `;
+
+  const insertUserQuery = `
     INSERT INTO users (
-      id, firstName, lastName, email, age, gender, phone, address, role, password
+      id, firstName, lastName, email, age, gender, phone, address, password, role
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
   `;
 
   try {
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 12);
-    console.log({ password });
+    // Check if the user with same email and role already exists
+    const [existingUser] = await db.execute(findEmailQuery, [email, role]);
 
+    if (existingUser.length > 0) {
+      throw new Error("User with this email and role already exists.");
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 12);
     const userId = generateId();
 
-    // Execute the query
-    const [result] = await db.execute(query, [
+    const [result] = await db.execute(insertUserQuery, [
       userId,
       firstName,
       lastName,
@@ -43,8 +52,8 @@ export const createUser = async (req) => {
       gender,
       phone,
       address,
-      role,
       hashedPassword,
+      role,
     ]);
 
     return { id: userId, affectedRows: result.affectedRows };
@@ -56,6 +65,8 @@ export const createUser = async (req) => {
 
 export const loginUser = async (req) => {
   const { email, password } = req.body;
+
+  console.log({ password });
 
   const query = "SELECT * FROM users WHERE email = ?";
 
@@ -73,8 +84,12 @@ export const loginUser = async (req) => {
       return { success: false, message: "User is blocked" };
     }
 
+    console.log("userPass:", user.password);
+
     // Compare the password
     const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    console.log(isPasswordValid);
 
     if (!isPasswordValid) {
       return { success: false, message: "Invalid email or password" };

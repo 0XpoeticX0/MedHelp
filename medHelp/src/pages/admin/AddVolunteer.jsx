@@ -1,12 +1,18 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
-import { User, Lock, Phone, MapPin, EyeOff, Eye, Hospital } from "lucide-react";
-import { useUserStore } from "../stores/userStore";
+import {
+  User,
+  Lock,
+  Phone,
+  MapPin,
+  EyeOff,
+  Eye,
+  PlusCircle,
+} from "lucide-react";
 import Swal from "sweetalert2";
+import { useUserStore } from "../../stores/userStore";
 
-const RegistrationPage = () => {
+const AddVolunteer = () => {
   const { createUser, loading } = useUserStore();
-  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -18,7 +24,7 @@ const RegistrationPage = () => {
     phone: "",
     address: "",
     password: "",
-    role: "patient",
+    role: "volunteer",
   });
 
   const handleChange = (e) => {
@@ -28,6 +34,7 @@ const RegistrationPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       await createUser(formData);
       Swal.fire({
@@ -37,7 +44,6 @@ const RegistrationPage = () => {
         showConfirmButton: false,
         timer: 1500,
       });
-      navigate("/login");
     } catch (err) {
       Swal.fire({
         position: "center",
@@ -55,7 +61,7 @@ const RegistrationPage = () => {
         {/* Left Section - Form */}
         <div className="hidden md:block w-1/2">
           <img
-            src="/Sign up-amico.png"
+            src="/addVolunteer.png"
             alt="Registration Illustration"
             className="h-full"
           />
@@ -63,12 +69,9 @@ const RegistrationPage = () => {
 
         {/* Right Section - Image */}
         <div className="w-full md:w-1/2 bg-white p-8">
-          <div className="flex text-blue-600 justify-center items-center my-8 gap-3">
-            <Hospital />
-            <h2 className="text-3xl font-semibold text-center">
-              Med Help Registration
-            </h2>
-          </div>
+          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            <PlusCircle /> Add Volunteer
+          </h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="flex gap-4">
@@ -211,19 +214,12 @@ const RegistrationPage = () => {
 
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white p-3 rounded-md hover:bg-blue-500"
+              className="w-full bg-[#92E3A9] p-3 rounded-md hover:bg-[#79d392]"
             >
-              <span>{loading ? "Register User..." : "Register"}</span>
+              <span>
+                {loading ? "Creating Volunteer..." : "Create Volunteer"}
+              </span>
             </button>
-            <div className="text-center mt-4">
-              <span className="text-gray-600">Already have an account? </span>
-              <Link
-                to="/login"
-                className="text-blue-600 hover:underline font-medium"
-              >
-                Login
-              </Link>
-            </div>
           </form>
         </div>
       </div>
@@ -231,4 +227,4 @@ const RegistrationPage = () => {
   );
 };
 
-export default RegistrationPage;
+export default AddVolunteer;

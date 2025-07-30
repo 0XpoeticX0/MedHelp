@@ -2,14 +2,15 @@ import { Layout, Button, Card, Row, Col, Typography, Avatar } from "antd";
 import { Heart, User, Stethoscope, Phone } from "lucide-react";
 import { Link } from "react-router"; // Assuming you're using React Router
 import HelpSection from "../components/module/home/HelpSection";
+import Footer from "../components/shared/Footer";
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
 
 const HomePage = () => {
   return (
-    <div className="container mx-auto">
-      <Content className="bg-gray-100 py-16">
+    <div className="">
+      <Content className={`bg-[url('./banner1.jpg')] bg-cover bg-center py-16`}>
         <HelpSection />
       </Content>
 
@@ -166,7 +167,7 @@ const HomePage = () => {
       </Content>
 
       {/* CTA Section */}
-      <Content className="bg-red-400 py-16 text-center text-white">
+      <Content className="bg-[#D2D1F4] py-16 text-center text-white">
         <div className="container mx-auto">
           <Title level={2} className="text-white mb-4">
             Ready to Make a Difference?
@@ -175,13 +176,18 @@ const HomePage = () => {
             Contact us today to get help or join our life-saving mission.
           </Text>
           <Button
+            color="primary"
             size="large"
-            className="bg-white text-red-500 border-none"
+            variant="solid"
             icon={<Phone size={20} />}
           >
             <Link to="/contact">Get in Touch</Link>
           </Button>
         </div>
+      </Content>
+
+      <Content>
+        <Footer />
       </Content>
     </div>
   );

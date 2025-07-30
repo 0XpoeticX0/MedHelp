@@ -14,9 +14,12 @@ export const createUserController = async (req, res) => {
   try {
     await createUser(req);
     res.status(201).json({ message: "User created successfully" });
-  } catch (error) {
-    console.error("Error creating user:", error);
-    res.status(500).json({ message: "Internal server error" });
+  } catch (err) {
+    console.error("Error creating user:", err.message);
+
+    res.status(400).json({
+      message: err.message || "Failed to create user",
+    });
   }
 };
 

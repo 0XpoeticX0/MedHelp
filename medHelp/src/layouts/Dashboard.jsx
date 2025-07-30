@@ -70,11 +70,25 @@ const Dashboard = () => {
         {
           key: "5",
           icon: <Users />,
-          label: (
-            <NavLink to="/dashboard/admin/manage-volunteers">
-              Manage Volunteers
-            </NavLink>
-          ),
+          label: "Manage Volunteers",
+          children: [
+            {
+              key: 11,
+              label: (
+                <NavLink to="/dashboard/admin/add-volunteer">
+                  Add Volunteer
+                </NavLink>
+              ),
+            },
+            {
+              key: 10,
+              label: (
+                <NavLink to="/dashboard/admin/manage-volunteers">
+                  All Volunteers
+                </NavLink>
+              ),
+            },
+          ],
         },
         {
           key: "6",
@@ -156,6 +170,7 @@ const Dashboard = () => {
             collapsible
             collapsed={collapsed}
             className="min-h-screen"
+            width={300}
           >
             <NavLink to="/">
               <div className="demo-logo-vertical" />
