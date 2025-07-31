@@ -2,7 +2,6 @@ import { Layout, Button, Card, Row, Col, Typography, Avatar } from "antd";
 import { Heart, User, Stethoscope, Phone } from "lucide-react";
 import { Link } from "react-router"; // Assuming you're using React Router
 import HelpSection from "../components/module/home/HelpSection";
-import Footer from "../components/shared/Footer";
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -184,10 +183,6 @@ const HomePage = () => {
             <Link to="/contact">Get in Touch</Link>
           </Button>
         </div>
-      </Content>
-
-      <Content>
-        <Footer />
       </Content>
     </div>
   );

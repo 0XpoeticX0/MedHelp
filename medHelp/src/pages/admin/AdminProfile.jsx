@@ -26,7 +26,7 @@ const AdminProfile = () => {
         const { data } = await axiosClient.get("/auth/dashboard-stats");
         if (data.success) {
           setStats(data.stats);
-          console.log(data.stats);
+          // console.log(data.stats);
         } else {
           throw new Error("Failed to fetch statistics");
         }
@@ -63,7 +63,7 @@ const AdminProfile = () => {
           <div className="grid grid-cols-3 gap-3">
             <Statistic
               title="Total Users"
-              value={stats.totalUsers}
+              value={stats.totalUsers || 0}
               prefix={<Users />}
             />
             <Statistic

@@ -1,5 +1,6 @@
 import db from "../config/db.js";
 import { loginUser } from "../models/user.model.js";
+import sendEmail from "../utils/sendEmail.js";
 
 export const loginUserController = async (req, res) => {
   try {
@@ -34,6 +35,23 @@ export const getDashboardStats = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Failed to retrieve statistics",
+    });
+  }
+};
+
+export const sendMailController = async (req, res) => {
+  try {
+    console.log(req.body);
+
+    const { email, name, subject, message } = req.body;
+
+    await sendEmail(email, name, subject, message);
+    res.status(200).json({ message: "Send Message Successfully" });
+  } catch (error) {
+    console.error("Error creating user:", err.message);
+
+    res.status(400).json({
+      message: err.message || "Failed to send mail",
     });
   }
 };
