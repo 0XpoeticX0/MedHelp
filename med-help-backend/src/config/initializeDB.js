@@ -58,6 +58,7 @@ export const initializeDB = async () => {
       CREATE TABLE IF NOT EXISTS courses (
         id VARCHAR(100) NOT NULL PRIMARY KEY,
         courseName VARCHAR(255) NOT NULL,
+        courseImg VARCHAR(255) NOT NULL,
         trainer VARCHAR(100) NOT NULL,
         startDate DATE NOT NULL,
         duration INT NOT NULL CHECK (duration > 0),

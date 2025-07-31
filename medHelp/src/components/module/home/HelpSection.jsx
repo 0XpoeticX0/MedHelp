@@ -75,7 +75,7 @@ const HelpSection = () => {
           <Link to="/">Get Help Now</Link>
         </Button>
         <Button size="large" className="border-red-500 text-red-500">
-          <Link to="/register">Become a Volunteer</Link>
+          <Link to="/register">Register Now!!</Link>
         </Button>
       </Space>
     </div>

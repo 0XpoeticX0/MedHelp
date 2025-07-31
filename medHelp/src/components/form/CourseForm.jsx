@@ -30,6 +30,7 @@ const CourseForm = () => {
     try {
       await axiosClient.post("/courses", {
         courseName: values.courseName,
+        courseImg: values.courseImg,
         trainer: values.trainer,
         startDate: values.startDate.format("YYYY-MM-DD"),
         duration: values.duration,
@@ -71,6 +72,16 @@ const CourseForm = () => {
               rules={[{ required: true, message: "Please enter course name" }]}
             >
               <Input placeholder="Enter course name" />
+            </Form.Item>
+
+            <Form.Item
+              name="courseImg"
+              label="Course Image Url"
+              rules={[
+                { required: true, message: "Please enter course image url" },
+              ]}
+            >
+              <Input placeholder="Enter url" />
             </Form.Item>
 
             <Form.Item

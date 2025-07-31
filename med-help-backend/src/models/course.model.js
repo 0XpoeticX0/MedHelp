@@ -2,12 +2,12 @@ import db from "../config/db.js";
 import { generateId } from "../utils/generateId.js";
 
 export const createCourse = async (req) => {
-  const { courseName, trainer, startDate, duration } = req.body;
+  const { courseName, courseImg, trainer, startDate, duration } = req.body;
 
   const query = `
         INSERT INTO courses (
-          id, courseName, trainer, startDate, duration
-        ) VALUES (?, ?, ?, ?, ?);
+          id, courseName,courseImg, trainer, startDate, duration
+        ) VALUES (?, ?, ?, ?, ?, ?);
       `;
 
   try {
@@ -17,6 +17,7 @@ export const createCourse = async (req) => {
     const [result] = await db.execute(query, [
       courseId,
       courseName,
+      courseImg,
       trainer,
       startDate,
       duration,
@@ -34,6 +35,7 @@ export const getCourses = async () => {
     SELECT 
       courses.id AS courseId, 
       courses.courseName, 
+      courses.courseImg, 
       courses.startDate, 
       courses.duration, 
       trainers.id AS trainerId, 
@@ -55,7 +57,7 @@ export const getCourses = async () => {
 // Update course by ID
 export const updateCourse = async (req) => {
   const { id } = req.params;
-  const { courseName, trainer, startDate, duration } = req.body;
+  const { courseName, courseImg, trainer, startDate, duration } = req.body;
 
   // Fetch current course details to preserve unprovided fields
   const [existingRows] = await db.execute(
@@ -72,6 +74,7 @@ export const updateCourse = async (req) => {
   // Build the update dynamically based on provided fields
   const updates = {};
   if (courseName !== undefined) updates.courseName = courseName;
+  if (courseImg !== undefined) updates.courseImg = courseImg;
   if (trainer !== undefined) updates.trainer = trainer;
   if (startDate !== undefined) updates.startDate = startDate;
   if (duration !== undefined) updates.duration = duration;

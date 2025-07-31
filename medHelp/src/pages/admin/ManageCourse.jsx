@@ -15,9 +15,9 @@ import dayjs from "dayjs";
 import axiosClient from "../../api/axiosClient";
 
 const ManageCourse = () => {
+  const [loading, setLoading] = useState(false);
   const [courses, setCourses] = useState([]);
   const [trainers, setTrainers] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [editingCourse, setEditingCourse] = useState(null);
   const [form] = Form.useForm();
@@ -105,6 +105,18 @@ const ManageCourse = () => {
   const columns = [
     { title: "Course Name", dataIndex: "courseName", key: "courseName" },
     {
+      title: "Course Image",
+      dataIndex: "courseImg",
+      key: "courseImg",
+      render: (courseImg) => (
+        <img
+          src={courseImg}
+          alt="courseImg"
+          style={{ width: 50, height: 50 }}
+        />
+      ),
+    },
+    {
       title: "Start Date",
       dataIndex: "startDate",
       key: "startDate",
@@ -155,6 +167,13 @@ const ManageCourse = () => {
           <Form.Item
             name="courseName"
             label="Course Name"
+            rules={[{ required: true }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="courseImg"
+            label="Course Image"
             rules={[{ required: true }]}
           >
             <Input />
