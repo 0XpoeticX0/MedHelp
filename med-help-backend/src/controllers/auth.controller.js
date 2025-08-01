@@ -18,6 +18,7 @@ export const getDashboardStats = async (req, res) => {
       SELECT 
         (SELECT COUNT(*) FROM users) AS totalUsers,
         (SELECT COUNT(*) FROM users WHERE role = 'patient') AS totalPatients,
+        (SELECT COUNT(*) FROM users WHERE role = 'volunteer') AS totalVolunteers,
         (SELECT COUNT(*) FROM trainers) AS totalTrainers,
         (SELECT COUNT(*) FROM users WHERE isBlocked = false) AS activeUsers,
         (SELECT COUNT(*) FROM users WHERE isBlocked = true) AS blockedUsers,

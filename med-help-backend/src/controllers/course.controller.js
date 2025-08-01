@@ -1,5 +1,6 @@
 import {
   createCourse,
+  createCourseEnrollment,
   deleteCourse,
   getCourses,
   updateCourse,
@@ -45,6 +46,16 @@ export const deleteCourseController = async (req, res) => {
     res.status(200).json(result);
   } catch (error) {
     console.error("Error fetching users:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const createCourseEnrollmentController = async (req, res) => {
+  try {
+    await createCourseEnrollment(req);
+    res.status(201).json({ message: "Successfully Course enrolled." });
+  } catch (error) {
+    console.error("Error creating user:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };

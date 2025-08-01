@@ -69,6 +69,18 @@ export const initializeDB = async () => {
     console.log("✅ Courses table created or already exists.");
 
     await pool.query(`
+  CREATE TABLE IF NOT EXISTS course_enrollments (
+    enrollment_id VARCHAR(100) PRIMARY KEY,
+    course_id VARCHAR(100),
+    volunteer_id VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+    FOREIGN KEY (volunteer_id) REFERENCES users(id) ON DELETE CASCADE
+  );
+`);
+    console.log("✅ Course enrollments table created or already exists.");
+
+    await pool.query(`
       CREATE TABLE IF NOT EXISTS helps (
         id VARCHAR(100) PRIMARY KEY,  
         patient_id VARCHAR(100),

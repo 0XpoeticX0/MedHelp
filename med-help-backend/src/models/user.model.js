@@ -66,7 +66,7 @@ export const createUser = async (req) => {
 export const loginUser = async (req) => {
   const { email, password } = req.body;
 
-  console.log({ password });
+  // console.log({ password });
 
   const query = "SELECT * FROM users WHERE email = ?";
 

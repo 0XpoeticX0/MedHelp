@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import axiosClient from "../api/axiosClient";
 import { Button, Card } from "antd";
 import { Clock } from "lucide-react";
+import { getUserFromToken } from "../utils/auth";
+import Swal from "sweetalert2";
 
 const Courses = () => {
   const [loading, setLoading] = useState(false);
@@ -30,8 +32,32 @@ const Courses = () => {
     );
   }
 
-  const onEnroll = (course) => {
-    console.log(course);
+  const user = getUserFromToken();
+
+  // console.log(user);
+
+  const onEnroll = async (course) => {
+    if (user.role === "volunteer") {
+      const data = {
+        courseId: course.courseId,
+        voluteerId: user.id,
+      };
+      await axiosClient.post("/courses/enrollment", data);
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "Course enroll successfully",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    } else {
+      Swal.fire({
+        title: "You have to be a volunteer.",
+        icon: "warning",
+        text: "Contact Us to register as volunteer.",
+        showConfirmButton: true,
+      });
+    }
   };
 
   return (

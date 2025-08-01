@@ -26,7 +26,7 @@ const AdminProfile = () => {
         const { data } = await axiosClient.get("/auth/dashboard-stats");
         if (data.success) {
           setStats(data.stats);
-          // console.log(data.stats);
+          console.log(data.stats);
         } else {
           throw new Error("Failed to fetch statistics");
         }

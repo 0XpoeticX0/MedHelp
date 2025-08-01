@@ -121,3 +121,29 @@ export const deleteCourse = async (courseId) => {
     throw error;
   }
 };
+
+export const createCourseEnrollment = async (req) => {
+  const { courseId, voluteerId } = req.body;
+
+  const query = `
+        INSERT INTO course_enrollments (
+          enrollment_id, course_id,volunteer_id
+        ) VALUES (?, ?, ?);
+      `;
+
+  try {
+    const enrollment_id = generateId(); // Generate a unique ID
+
+    // Execute the query
+    const [result] = await db.execute(query, [
+      enrollment_id,
+      courseId,
+      voluteerId,
+    ]);
+
+    return { id: courseId, affectedRows: result.affectedRows };
+  } catch (error) {
+    console.error("❌ Error creating course:", error.message);
+    throw error;
+  }
+};
