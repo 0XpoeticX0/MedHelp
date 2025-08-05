@@ -10,7 +10,7 @@ const HelpSection = () => {
 
   const user = getUserFromToken();
 
-  console.log(user);
+  // console.log(user);
 
   const patient_id = user?.id || `GUEST-${Date.now()}`;
 
@@ -20,10 +20,10 @@ const HelpSection = () => {
         async (position) => {
           const { latitude, longitude } = position.coords;
 
-          console.log({ latitude, longitude });
+          // console.log({ latitude, longitude });
 
           try {
-            const res = await axiosClient.post("/users/seek-for-help", {
+            const res = await axiosClient.post("/help/post-for-help", {
               latitude,
               longitude,
               patient_id,
@@ -33,7 +33,11 @@ const HelpSection = () => {
 
             if (res.statusText === "OK") {
               message.success("Location sent successfully.");
-              navigate("/volunteer");
+              navigate("/waiting-room", {
+                state: {
+                  patient_id,
+                },
+              });
             } else {
               message.error("No volunteers available.");
             }
@@ -72,10 +76,10 @@ const HelpSection = () => {
           className="bg-red-500 border-red-500"
           icon={<ArrowRight size={20} />}
         >
-          <Link to="/">Get Help Now</Link>
+          Get Help Now
         </Button>
         <Button size="large" className="border-red-500 text-red-500">
-          <Link to="/register">Register Now!!</Link>
+          <Link to="/register">Become a Volunteer</Link>
         </Button>
       </Space>
     </div>

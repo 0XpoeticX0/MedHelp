@@ -18,32 +18,30 @@ export const createUser = async (req) => {
     address,
     role,
     password,
+    guest_id,
   } = req.body;
 
-  console.log(req.body);
-
-  const findEmailQuery = `
-    SELECT * FROM users WHERE email = ? AND role = ?;
-  `;
-
-  const insertUserQuery = `
+  const query = `
     INSERT INTO users (
-      id, firstName, lastName, email, age, gender, phone, address, password, role
+      id, firstName, lastName, email, age, gender, phone, address, role, password
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
   `;
 
+  const updateHelpsQuery = `
+    UPDATE helps 
+    SET patient_id = ?
+    WHERE patient_id = ?
+  `;
+
   try {
-    // Check if the user with same email and role already exists
-    const [existingUser] = await db.execute(findEmailQuery, [email, role]);
-
-    if (existingUser.length > 0) {
-      throw new Error("User with this email and role already exists.");
-    }
-
+    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 12);
+    console.log({ password });
+
     const userId = generateId();
 
-    const [result] = await db.execute(insertUserQuery, [
+    // Execute the query
+    const [result] = await db.execute(query, [
       userId,
       firstName,
       lastName,
@@ -52,9 +50,24 @@ export const createUser = async (req) => {
       gender,
       phone,
       address,
-      hashedPassword,
       role,
+      hashedPassword,
     ]);
+
+    if (guest_id) {
+      try {
+        const [updateResult] = await db.execute(updateHelpsQuery, [
+          userId,
+          guest_id,
+        ]);
+        console.log(
+          `✅ Updated ${updateResult.affectedRows} help records with new patient_id`
+        );
+      } catch (updateError) {
+        console.error("❌ Error updating helps table:", updateError.message);
+        // You might want to decide whether to throw this error or continue
+      }
+    }
 
     return { id: userId, affectedRows: result.affectedRows };
   } catch (error) {
@@ -65,8 +78,6 @@ export const createUser = async (req) => {
 
 export const loginUser = async (req) => {
   const { email, password } = req.body;
-
-  // console.log({ password });
 
   const query = "SELECT * FROM users WHERE email = ?";
 
@@ -84,12 +95,8 @@ export const loginUser = async (req) => {
       return { success: false, message: "User is blocked" };
     }
 
-    console.log("userPass:", user.password);
-
     // Compare the password
     const isPasswordValid = await bcrypt.compare(password, user.password);
-
-    console.log(isPasswordValid);
 
     if (!isPasswordValid) {
       return { success: false, message: "Invalid email or password" };
@@ -227,82 +234,6 @@ export const getVolunteerAvailability = async (volunteerId) => {
     return rows[0]; // Return the first row if exists
   } catch (error) {
     console.error("❌ Error fetching availability:", error.message);
-    throw error;
-  }
-};
-
-export const seekHelp = async (latitude, longitude, patient_id) => {
-  const query = `
-    INSERT INTO helps (id, patient_id, latitude, longitude)
-    VALUES (?, ?, ?, ?);
-  `;
-
-  try {
-    const helpId = generateId();
-    const [result] = await db.execute(query, [
-      helpId,
-      patient_id,
-      latitude,
-      longitude,
-    ]);
-
-    return { id: helpId, affectedRows: result.affectedRows };
-  } catch (error) {
-    console.error("❌ Error seeking help:", error.message);
-    throw error;
-  }
-};
-
-export const getHelpForVolunteer = async (volunteerId) => {
-  if (!volunteerId) {
-    return res.status(400).json({ error: "Missing volunteerId parameter" });
-  }
-
-  try {
-    // Query to get the volunteer's location from the volunteer_availability table
-    const [volunteerLocation] = await db.query(
-      `
-      SELECT latitude, longitude
-      FROM volunteer_availability
-      WHERE volunteer_id = ?
-    `,
-      [volunteerId]
-    );
-
-    if (volunteerLocation.length === 0) {
-      return res.status(404).json({ error: "Volunteer not found" });
-    }
-
-    const { latitude: volunteerLat, longitude: volunteerLon } =
-      volunteerLocation[0];
-
-    // Query to get all helps with patient location that are not yet assigned to a volunteer
-    const [helps] = await db.query(`
-      SELECT id, patient_id, latitude, longitude, status
-      FROM helps
-      WHERE volunteer_id IS NULL
-    `);
-
-    // Filter helps that are within 5 km of the volunteer's location
-    const nearbyHelps = helps.filter((help) => {
-      const distance = haversineDistance(
-        parseFloat(volunteerLat),
-        parseFloat(volunteerLon),
-        parseFloat(help.latitude),
-        parseFloat(help.longitude)
-      );
-
-      return distance <= 5; // Only include helps within 5 km
-    });
-
-    if (nearbyHelps.length === 0) {
-      return res.status(404).json({ message: "No helps found within 5km." });
-    }
-
-    // Return the list of nearby helps
-    return nearbyHelps;
-  } catch (error) {
-    console.error("❌ Error fetching help:", error.message);
     throw error;
   }
 };

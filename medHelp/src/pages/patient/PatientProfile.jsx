@@ -8,8 +8,10 @@ import {
   CheckCircle,
   User,
 } from "lucide-react";
+import { getUserFromToken } from "../../utils/auth";
 
 const PatientProfile = () => {
+  const user = getUserFromToken();
   return (
     <div className="container mx-auto py-8 px-4">
       <Row gutter={[16, 16]}>
@@ -45,7 +47,7 @@ const PatientProfile = () => {
 
         {/* Profile Card */}
         <Col xs={24} md={8}>
-          <ProfileCard />
+          <ProfileCard user={user} />
         </Col>
 
         {/* Health Stats Card */}

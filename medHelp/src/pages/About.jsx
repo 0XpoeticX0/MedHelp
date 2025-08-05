@@ -24,7 +24,7 @@ const teamMembers = [
 
 const About = () => {
   return (
-    <div className="py-20 px-4 text-center bg-white">
+    <div className="py-20 px-4 text-center bg-[#f6f7f9]">
       <img
         src="/About-us.png"
         alt="About Us"

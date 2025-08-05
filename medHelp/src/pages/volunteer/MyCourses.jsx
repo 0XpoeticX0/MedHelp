@@ -1,26 +1,17 @@
 import { useEffect, useState } from "react";
-import { Card, List, Typography, Spin, message, Tag, Button } from "antd";
+import { Card, List, Typography, Spin, message, Tag } from "antd";
 import axiosClient from "../../api/axiosClient";
-import {
-  BookOpen,
-  CalendarDays,
-  Clock4,
-  Download,
-  UserRound,
-} from "lucide-react";
-import generateCertificate from "../../utils/generateCertificate";
+import { BookOpen, CalendarDays, Clock4, UserRound } from "lucide-react";
 
 const { Title, Text } = Typography;
 
-const Certificate = () => {
+const MyCourses = () => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fetchEnrolledCourses = async () => {
     try {
-      const response = await axiosClient.get(
-        "/courses/volunteer/getCirtifiedCourse"
-      );
+      const response = await axiosClient.get("/courses/volunteer/enrollments");
       setCourses(response.data);
       // eslint-disable-next-line no-unused-vars
     } catch (error) {
@@ -41,7 +32,7 @@ const Certificate = () => {
       <div className="flex items-center gap-2 mb-6">
         <BookOpen className="text-blue-600 w-6 h-6" />
         <Title level={2} className="!text-blue-600 !mb-0">
-          Available Cirtificates
+          My Enrolled Courses
         </Title>
       </div>
 
@@ -88,12 +79,6 @@ const Certificate = () => {
                   <Text strong>Duration:</Text>
                   <Tag color="blue">{course.duration} months</Tag>
                 </p>
-                <Button
-                  icon={<Download />}
-                  onClick={() => generateCertificate(course)}
-                >
-                  Download Certificate
-                </Button>
               </Card>
             </List.Item>
           )}
@@ -103,4 +88,4 @@ const Certificate = () => {
   );
 };
 
-export default Certificate;
+export default MyCourses;

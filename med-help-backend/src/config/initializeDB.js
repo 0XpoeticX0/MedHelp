@@ -27,6 +27,19 @@ export const initializeDB = async () => {
     console.log("✅ Users table created or already exists.");
 
     await pool.query(`
+         CREATE TABLE IF NOT EXISTS volunteer_availability (
+      volunteer_id VARCHAR(100) PRIMARY KEY,
+      is_available ENUM('available', 'notAvailable', 'inService') DEFAULT 'notAvailable',
+      latitude DECIMAL(10, 6),
+      longitude DECIMAL(10, 6),
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+      FOREIGN KEY (volunteer_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+    
+        `);
+    console.log("✅ Volunteer_availability table created or already exists.");
+
+    await pool.query(`
       CREATE TABLE IF NOT EXISTS trainers (
         id VARCHAR(100) NOT NULL PRIMARY KEY,
         fullname VARCHAR(255) NOT NULL,
@@ -40,19 +53,6 @@ export const initializeDB = async () => {
       );
     `);
     console.log("✅ Trainers table created or already exists.");
-
-    await pool.query(`
-     CREATE TABLE IF NOT EXISTS volunteer_availability (
-  volunteer_id VARCHAR(100) PRIMARY KEY,
-  is_available ENUM('available', 'notAvailable', 'inService') DEFAULT 'notAvailable',
-  latitude DECIMAL(10, 6),
-  longitude DECIMAL(10, 6),
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  FOREIGN KEY (volunteer_id) REFERENCES users(id) ON DELETE CASCADE
-);
-
-    `);
-    console.log("✅ Volunteer_availability table created or already exists.");
 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS courses (
@@ -69,16 +69,19 @@ export const initializeDB = async () => {
     console.log("✅ Courses table created or already exists.");
 
     await pool.query(`
-  CREATE TABLE IF NOT EXISTS course_enrollments (
-    enrollment_id VARCHAR(100) PRIMARY KEY,
-    course_id VARCHAR(100),
-    volunteer_id VARCHAR(100),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
-    FOREIGN KEY (volunteer_id) REFERENCES users(id) ON DELETE CASCADE
-  );
-`);
-    console.log("✅ Course enrollments table created or already exists.");
+      CREATE TABLE IF NOT EXISTS enrollments (
+        id  VARCHAR(100) NOT NULL PRIMARY KEY,
+        course_id VARCHAR(100) NOT NULL,
+        student_id VARCHAR(100) NOT NULL,
+        enrollment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        
+        FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE,
+        FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE,
+        
+        UNIQUE (course_id, student_id)
+      );
+    `);
+    console.log("✅ Enrollments table created or already exists.");
 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS helps (

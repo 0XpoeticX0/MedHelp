@@ -4,10 +4,8 @@ import auth from "../middlewares/auth.js";
 import {
   createUserController,
   deleteUsersController,
-  getHelpForVolunteerController,
   getUsersController,
   getVolunteerAvailabilityController,
-  seekHelpController,
   toggleUserStatusController,
   volunteerAvailabilityController,
 } from "../controllers/user.controller.js";
@@ -27,12 +25,6 @@ router.get(
   "/availability",
   auth("volunteer"),
   getVolunteerAvailabilityController
-);
-router.post("/seek-for-help", seekHelpController);
-router.get(
-  "/help-for-volunteer",
-  auth("volunteer"),
-  getHelpForVolunteerController
 );
 
 export default router;

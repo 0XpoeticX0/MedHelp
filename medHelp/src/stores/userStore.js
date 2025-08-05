@@ -15,15 +15,13 @@ export const useUserStore = create((set) => ({
 
       console.log("✅ User created successfully:", response.data);
     } catch (error) {
-      const errorMessage =
-        error?.response?.data?.message ||
-        error.message ||
-        "Failed to create user";
-
-      set({ error: errorMessage });
-      throw new Error(errorMessage);
-    } finally {
-      set({ loading: false });
+      set({
+        error: error.response?.data?.message || "Failed to create user",
+        loading: false,
+      });
     }
   },
+
+  // Reset Store
+  //   resetUser: () => set({ user: null, loading: false, error: null }),
 }));

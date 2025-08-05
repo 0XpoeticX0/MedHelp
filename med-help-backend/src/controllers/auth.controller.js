@@ -8,7 +8,7 @@ export const loginUserController = async (req, res) => {
     res.status(201).json({ data: result });
   } catch (error) {
     console.error("Error creating user:", error);
-    res.status(500).json({ message: error });
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -22,7 +22,9 @@ export const getDashboardStats = async (req, res) => {
         (SELECT COUNT(*) FROM trainers) AS totalTrainers,
         (SELECT COUNT(*) FROM users WHERE isBlocked = false) AS activeUsers,
         (SELECT COUNT(*) FROM users WHERE isBlocked = true) AS blockedUsers,
-        (SELECT COUNT(*) FROM courses) AS totalCourses
+        (SELECT COUNT(*) FROM courses) AS totalCourses,
+        (SELECT COUNT(*) FROM helps WHERE status = 'completed') AS totalHelps,
+        (SELECT COUNT(*) FROM volunteer_availability WHERE is_available = 'available') AS totalActiveVolunteers
     `;
 
     const [result] = await db.execute(query);
@@ -42,7 +44,7 @@ export const getDashboardStats = async (req, res) => {
 
 export const sendMailController = async (req, res) => {
   try {
-    console.log(req.body);
+    // console.log(req.body);
 
     const { email, name, subject, message } = req.body;
 

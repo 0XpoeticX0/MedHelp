@@ -42,7 +42,7 @@ const Contact = () => {
   };
 
   return (
-    <div className="min-h-screen px-4 py-10 flex flex-col md:flex-row items-center justify-center gap-10">
+    <div className="min-h-screen bg-[#f6f7f9] px-4 py-10 flex flex-col md:flex-row items-center justify-center gap-10">
       {/* Image Section */}
       <div className="w-full md:w-1/2">
         <img
@@ -131,18 +131,18 @@ const Contact = () => {
           <button
             disabled={loading}
             type="submit"
-            className="bg-purple-600 text-white px-4 py-2 rounded flex items-center gap-2 hover:bg-purple-700 transition"
+            className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 "
           >
             {loading ? (
-              <>
+              <span className="text-white flex items-center gap-2 transition">
                 <Loader2 />
                 Sending Message...
-              </>
+              </span>
             ) : (
-              <>
+              <span className="text-white flex items-center gap-2  transition">
                 <Send size={16} />
                 Send Message
-              </>
+              </span>
             )}
           </button>
         </form>

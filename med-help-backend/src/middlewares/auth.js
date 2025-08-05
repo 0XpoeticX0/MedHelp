@@ -1,6 +1,7 @@
 import config from "../config/index.js";
 import status from "http-status";
 import { jwtHelpers } from "../utils/jwtHelpers.js";
+import AppError from "./AppError.js";
 
 const auth = (...roles) => {
   return async (req, res, next) => {
@@ -17,6 +18,9 @@ const auth = (...roles) => {
       );
 
       req.user = verifiedUser;
+
+      // console.log(verifiedUser);
+      // console.log(roles);
 
       if (roles.length && !roles.includes(verifiedUser.role)) {
         throw new AppError(status.FORBIDDEN, "Forbidden!");

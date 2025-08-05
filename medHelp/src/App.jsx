@@ -8,10 +8,10 @@ function App() {
       <div className="top-0 sticky z-10">
         <NavBar />
       </div>
-      <div className="">
+      <div className="container mx-auto">
         <Outlet />
       </div>
-      <div className="">
+      <div className="container mx-auto">
         <Footer />
       </div>
     </div>

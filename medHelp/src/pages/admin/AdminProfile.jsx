@@ -10,15 +10,19 @@ import {
   Briefcase,
   HeartHandshake,
   UserRoundX,
+  HandHelping,
+  Wifi,
 } from "lucide-react";
 import { NavLink } from "react-router";
 import ProfileCard from "../../components/card/ProfileCard";
 import axiosClient from "../../api/axiosClient.js"; // Import axiosClient
+import { getUserFromToken } from "../../utils/auth.js";
 
 const AdminProfile = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const user = getUserFromToken();
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -49,7 +53,7 @@ const AdminProfile = () => {
   return (
     <div className="container mx-auto grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-6">
       {/* Profile Card */}
-      <ProfileCard />
+      <ProfileCard user={user} />
 
       {/* Statistics Cards */}
       <Card className="shadow-md rounded-lg">
@@ -63,7 +67,7 @@ const AdminProfile = () => {
           <div className="grid grid-cols-3 gap-3">
             <Statistic
               title="Total Users"
-              value={stats.totalUsers || 0}
+              value={stats.totalUsers}
               prefix={<Users />}
             />
             <Statistic
@@ -95,6 +99,16 @@ const AdminProfile = () => {
               title="Total Trainers"
               value={stats.totalTrainers}
               prefix={<Users />}
+            />
+            <Statistic
+              title="Total Helps"
+              value={stats.totalHelps}
+              prefix={<HandHelping />}
+            />
+            <Statistic
+              title="Total Active Volunteers"
+              value={stats.totalActiveVolunteers}
+              prefix={<Wifi />}
             />
           </div>
         )}

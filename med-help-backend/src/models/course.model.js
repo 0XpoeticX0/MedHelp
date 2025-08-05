@@ -30,6 +30,28 @@ export const createCourse = async (req) => {
   }
 };
 
+export const createEnrollment = async (req) => {
+  const { courseId } = req.body;
+  const studentId = req.user.id;
+
+  const query = `
+    INSERT INTO enrollments (
+      id, course_id, student_id
+    ) VALUES (?, ?, ?);
+  `;
+
+  try {
+    const id = generateId(); // Generate a unique ID
+
+    const [result] = await db.execute(query, [id, courseId, studentId]);
+
+    return { id, affectedRows: result.affectedRows };
+  } catch (error) {
+    console.error("❌ Error creating enrollment:", error.message);
+    throw error;
+  }
+};
+
 export const getCourses = async () => {
   const query = `
     SELECT 
@@ -42,7 +64,7 @@ export const getCourses = async () => {
       trainers.fullname AS trainerName, 
       trainers.email AS trainerEmail
     FROM courses
-    JOIN trainers ON courses.trainer = trainers.id;
+    JOIN trainers ON courses.trainer = trainers.id where DATEDIFF(NOW(), courses.startDate) < courses.duration;
   `;
 
   try {
@@ -57,7 +79,7 @@ export const getCourses = async () => {
 // Update course by ID
 export const updateCourse = async (req) => {
   const { id } = req.params;
-  const { courseName, courseImg, trainer, startDate, duration } = req.body;
+  const { courseName, trainer, startDate, duration } = req.body;
 
   // Fetch current course details to preserve unprovided fields
   const [existingRows] = await db.execute(
@@ -122,28 +144,50 @@ export const deleteCourse = async (courseId) => {
   }
 };
 
-export const createCourseEnrollment = async (req) => {
-  const { courseId, voluteerId } = req.body;
-
+export const getCoursesByVolunteer = async (volunteerId) => {
   const query = `
-        INSERT INTO course_enrollments (
-          enrollment_id, course_id,volunteer_id
-        ) VALUES (?, ?, ?);
-      `;
+    SELECT 
+      c.courseName,
+      c.courseImg,
+      t.fullname AS trainerName,
+      c.startDate,
+      c.duration
+    FROM enrollments e
+    JOIN courses c ON e.course_id = c.id
+    JOIN trainers t ON c.trainer = t.id
+    WHERE e.student_id = ?;
+  `;
 
   try {
-    const enrollment_id = generateId(); // Generate a unique ID
-
-    // Execute the query
-    const [result] = await db.execute(query, [
-      enrollment_id,
-      courseId,
-      voluteerId,
-    ]);
-
-    return { id: courseId, affectedRows: result.affectedRows };
+    const [rows] = await db.execute(query, [volunteerId]);
+    return rows;
   } catch (error) {
-    console.error("❌ Error creating course:", error.message);
+    console.error("❌ Error fetching courses by volunteer:", error.message);
+    throw error;
+  }
+};
+
+export const getAvailableCourseForCertificate = async (volunteerId) => {
+  const query = `
+    SELECT 
+      c.courseName,
+      c.courseImg,
+      t.fullname AS trainerName,
+      c.startDate,
+      c.duration
+    FROM enrollments e
+    JOIN courses c ON e.course_id = c.id
+    JOIN trainers t ON c.trainer = t.id
+    WHERE e.student_id = ? AND DATEDIFF(NOW(), c.startDate) > c.duration;
+  `;
+
+  try {
+    const [rows] = await db.execute(query, [volunteerId]);
+    console.log(rows);
+
+    return rows;
+  } catch (error) {
+    console.error("❌ Error fetching courses by volunteer:", error.message);
     throw error;
   }
 };

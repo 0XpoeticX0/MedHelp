@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { Card, Tag, Descriptions, Space, Avatar } from "antd";
 import {
   User,
@@ -9,7 +10,6 @@ import {
   Lock,
   CheckCircle,
 } from "lucide-react";
-import { getUserFromToken } from "../../utils/auth";
 import React from "react";
 
 const roleConfig = {
@@ -30,8 +30,7 @@ const roleConfig = {
   },
 };
 
-const ProfileCard = () => {
-  const user = getUserFromToken();
+const ProfileCard = ({ user }) => {
   const config = roleConfig[user.role] || roleConfig.patient;
 
   return (

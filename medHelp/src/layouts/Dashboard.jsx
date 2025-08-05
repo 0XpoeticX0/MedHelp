@@ -1,5 +1,4 @@
 import { Navigate, NavLink, Outlet, useNavigate } from "react-router";
-import { getUserFromToken, logout } from "../utils/auth";
 import { Button, Layout, Menu, Tooltip } from "antd";
 import { useState } from "react";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
@@ -13,9 +12,12 @@ import {
   User,
   BookOpenCheck,
   History,
+  Wifi,
 } from "lucide-react";
 
 import Swal from "sweetalert2";
+import axiosClient from "../api/axiosClient";
+import { getUserFromToken, logout } from "../utils/auth";
 const { Header, Sider, Content } = Layout;
 
 const Dashboard = () => {
@@ -24,7 +26,17 @@ const Dashboard = () => {
 
   const [collapsed, setCollapsed] = useState(false);
 
-  const handleLogout = () => {
+  // console.log(role);
+  const handleLogout = async () => {
+    if (role === "volunteer") {
+      // console.log(role);
+
+      await axiosClient.post("/users/availability", {
+        isAvailable: "notAvailable",
+        latitude: null,
+        longitude: null,
+      });
+    }
     logout();
     Swal.fire({
       position: "center",
@@ -128,12 +140,41 @@ const Dashboard = () => {
           label: <NavLink to="/dashboard/volunteer/profile">Profile</NavLink>,
         },
         {
+          key: "6",
+          icon: <BookOpen />,
+          label: (
+            <NavLink to="/dashboard/volunteer/all-courses">All Courses</NavLink>
+          ),
+        },
+        {
           key: "2",
           icon: <BookOpen />,
-          label: <NavLink to="/dashboard/volunteer/courses">Course</NavLink>,
+          label: (
+            <NavLink to="/dashboard/volunteer/my-courses">
+              Enrolled Courses
+            </NavLink>
+          ),
         },
         {
           key: "3",
+          icon: <Wifi />,
+          label: (
+            <NavLink to="/dashboard/volunteer/running-services">
+              Running Services
+            </NavLink>
+          ),
+        },
+        {
+          key: "4",
+          icon: <History />,
+          label: (
+            <NavLink to="/dashboard/volunteer/service-history">
+              Service History
+            </NavLink>
+          ),
+        },
+        {
+          key: "5",
           icon: <BookOpenCheck />,
           label: (
             <NavLink to="/dashboard/volunteer/certification">
@@ -170,7 +211,6 @@ const Dashboard = () => {
             collapsible
             collapsed={collapsed}
             className="min-h-screen"
-            width={300}
           >
             <NavLink to="/">
               <div className="demo-logo-vertical" />
@@ -203,17 +243,22 @@ const Dashboard = () => {
                 <Tooltip placement="right" title="Log out">
                   <button
                     onClick={handleLogout}
-                    className="flex gap-2 text-red-500 cursor-pointer hover:text-white"
+                    className="flex items-center justify-center text-red-500 hover:text-white transition-colors duration-200"
                   >
-                    <LogOut size={20} />
+                    <p className="text-sm font-medium text-red-500">
+                      <LogOut size={24} />
+                    </p>
                   </button>
                 </Tooltip>
               ) : (
                 <button
                   onClick={handleLogout}
-                  className="flex gap-2 text-red-500 cursor-pointer hover:text-white"
+                  className="flex items-center gap-2 text-red-500 hover:text-white transition-colors duration-200"
                 >
-                  <LogOut size={20} /> <span>Log out</span>
+                  <span className="text-sm font-medium text-red-500 flex gap-3">
+                    <LogOut size={24} />
+                    Log out
+                  </span>
                 </button>
               )}
             </div>

@@ -4,24 +4,31 @@ import {
   Col,
   Row,
   Statistic,
-  Timeline,
   Avatar,
   Button,
   message,
   Tag,
+  Table,
+  Space,
 } from "antd";
-import { Clock, Heart, Users, Calendar, CheckCircle } from "lucide-react";
-// import { useNavigate } from "react-router";
+import { Clock, Heart, Users } from "lucide-react";
 import axiosClient from "../../api/axiosClient";
 import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
 import { SyncOutlined } from "@ant-design/icons";
+import { getUserFromToken } from "../../utils/auth";
+import { useNavigate } from "react-router";
 
 const VolunteerProfile = () => {
-  // const navigate = useNavigate();
+  const [isAvailable, setIsAvailable] = useState(); // current availability status of the volunteer
+  const [seekHelp, setSeekHelp] = useState([]); // list of people seeking help
+  const user = getUserFromToken();
+  const navigate = useNavigate();
 
-  const [isAvailable, setIsAvailable] = useState();
-
+  /**
+   * Handles volunteer availability updates by getting the user's location
+   * and sending it to the server.
+   */
   const handleProvideService = (value) => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
@@ -35,7 +42,7 @@ const VolunteerProfile = () => {
               longitude,
             });
 
-            if (res.statusText === "OK") {
+            if (res.status === 200) {
               setIsAvailable(value);
               Swal.fire({
                 position: "center",
@@ -43,7 +50,7 @@ const VolunteerProfile = () => {
                 title: res.data.message,
               });
             } else {
-              message.error("No volunteers available.");
+              message.error("Failed to update availability.");
             }
           } catch (err) {
             console.error(err);
@@ -60,6 +67,10 @@ const VolunteerProfile = () => {
     }
   };
 
+  /**
+   * Fetch the volunteer's current availability status on mount
+   * or when `isAvailable` is updated.
+   */
   useEffect(() => {
     const fetchAvailability = async () => {
       try {
@@ -73,20 +84,102 @@ const VolunteerProfile = () => {
     fetchAvailability();
   }, [isAvailable]);
 
-  const helps = axiosClient.get("/users/help-for-volunteer");
-  console.log(helps.data);
+  /**
+   * Fetch list of help requests for this volunteer on component mount.
+   */
+  useEffect(() => {
+    const fetchSeekHelp = async () => {
+      try {
+        const response = await axiosClient.get("/help/help-for-volunteer");
+
+        if (response.data?.success) {
+          setSeekHelp(response.data.data || []);
+        } else {
+          console.warn("Failed to fetch help requests:", response.data.message);
+          setSeekHelp([]);
+          message.error(
+            response.data.message || "Failed to fetch help requests"
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching help requests:", error);
+        setSeekHelp([]);
+        message.error("An error occurred while fetching help requests");
+      }
+    };
+
+    fetchSeekHelp();
+  }, []);
+
+  // Update handleAccept to refresh the list
+  const handleAccept = async (record) => {
+    try {
+      const response = await axiosClient.put("/help/update-help-status", {
+        helpId: record.id,
+        volunteerId: user.id,
+      });
+
+      if (response.status === 200) {
+        Swal.fire({
+          icon: "success",
+          title: "Help request accepted!",
+          text: `You have accepted help request from ${record.patient_id}.`,
+        });
+      }
+      navigate(`/dashboard/volunteer/navigation-page/${record.id}`);
+    } catch (error) {
+      console.error("Error accepting help request:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Oops... Something went wrong!",
+      });
+    }
+  };
+
+  // Table columns for displaying people who need help
+  const columns = [
+    {
+      title: "Patient ID",
+      dataIndex: "patient_id",
+      key: "patient_id",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (record) => (
+        <Space size="middle">
+          <Button
+            disabled={isAvailable === "inService"}
+            onClick={() => {
+              handleAccept(record);
+              // TODO: Implement actual accept logic
+            }}
+            type="primary"
+            className="bg-green-500 hover:bg-green-600 text-white"
+          >
+            Accept
+          </Button>
+        </Space>
+      ),
+    },
+  ];
 
   return (
     <div className="mx-auto container py-8 px-4">
       <Row gutter={[16, 16]}>
-        {/* Welcome Card with Cheerful Note */}
+        {/* Welcome Card */}
         <Col xs={24} md={8}>
           <Card
             style={{
               borderRadius: "12px",
               boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
               height: "100%",
-              background: "linear-gradient(135deg, #f6ffed 0%, #e6f4ea 100%)", // Light green gradient
+              background: "linear-gradient(135deg, #f6ffed 0%, #e6f4ea 100%)",
             }}
           >
             <div className="flex flex-col items-center gap-4 text-center">
@@ -102,42 +195,32 @@ const VolunteerProfile = () => {
                 <p className="text-gray-700 text-sm leading-relaxed">
                   &quot;Hey there, world-changer! Every smile you create, every
                   hand you lift, and every moment you give makes our community
-                  shine brighter. You’re not just a volunteer—you’re a spark of
-                  hope, a burst of joy, and a true hero in action. Keep rocking
-                  it—we’re so grateful for YOU!&quot;
+                  shine brighter...&quot;
                 </p>
               </div>
-              <div className="">
+              <div>
                 {isAvailable === "notAvailable" ? (
                   <Button
-                    onClick={() => handleProvideService("inService")}
-                    variant="outlined"
-                    color="green"
+                    onClick={() => handleProvideService("available")}
                     className="mt-4"
                   >
                     Available For Service
                   </Button>
+                ) : isAvailable === "inService" ? (
+                  <Tag
+                    className="mt-4"
+                    color="yellow"
+                    icon={<SyncOutlined spin />}
+                  >
+                    In Service...
+                  </Tag>
                 ) : (
-                  <>
-                    {isAvailable === "available" ? (
-                      <Tag
-                        className="mt-4"
-                        color="yellow"
-                        icon={<SyncOutlined spin />}
-                      >
-                        In Service...
-                      </Tag>
-                    ) : (
-                      <Button
-                        onClick={() => handleProvideService("notAvailable")}
-                        variant="outlined"
-                        color="orange"
-                        className="mt-4"
-                      >
-                        Go to offline
-                      </Button>
-                    )}
-                  </>
+                  <Button
+                    onClick={() => handleProvideService("notAvailable")}
+                    className="mt-4"
+                  >
+                    Go to Offline
+                  </Button>
                 )}
               </div>
             </div>
@@ -146,10 +229,10 @@ const VolunteerProfile = () => {
 
         {/* Profile Card */}
         <Col xs={24} md={8}>
-          <ProfileCard />
+          <ProfileCard user={user} />
         </Col>
 
-        {/* Stats Card */}
+        {/* Volunteer Stats */}
         <Col xs={24} md={8}>
           <Card
             style={{
@@ -178,7 +261,7 @@ const VolunteerProfile = () => {
           </Card>
         </Col>
 
-        {/* Recent Activity Card */}
+        {/* Help Requests Table */}
         <Col xs={24} md={16}>
           <Card
             style={{
@@ -187,34 +270,15 @@ const VolunteerProfile = () => {
             }}
           >
             <h3 className="text-lg font-semibold mb-4">Need Help</h3>
-            <Timeline
-              items={[
-                {
-                  children: (
-                    <div>
-                      <p className="font-medium">Community Cleanup</p>
-                      <p className="text-gray-500 text-sm">
-                        <Calendar size={14} className="inline mr-1" />
-                        March 15, 2025
-                      </p>
-                    </div>
-                  ),
-                  dot: <CheckCircle size={16} className="text-green-500" />,
-                },
-                {
-                  children: (
-                    <div>
-                      <p className="font-medium">Food Drive Support</p>
-                      <p className="text-gray-500 text-sm">
-                        <Calendar size={14} className="inline mr-1" />
-                        March 10, 2025
-                      </p>
-                    </div>
-                  ),
-                  dot: <CheckCircle size={16} className="text-green-500" />,
-                },
-              ]}
-            />
+            {isAvailable === "notAvailable" ? (
+              <span>Please change your status to see the help requests.</span>
+            ) : (
+              <Table
+                dataSource={seekHelp}
+                columns={columns}
+                rowKey={(record) => record.patient_id} // important for key warnings
+              />
+            )}
           </Card>
         </Col>
 

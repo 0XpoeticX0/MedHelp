@@ -12,6 +12,6 @@ export const getUserFromToken = () => {
   }
 };
 
-export const logout = () => {
+export const logout = async () => {
   localStorage.removeItem("accessToken");
 };
