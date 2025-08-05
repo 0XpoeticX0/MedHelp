@@ -25,7 +25,7 @@ const Courses = () => {
     fetchCourses();
   }, []);
 
-  console.log("Courses:", courses);
+  //console.log("Courses:", courses);
 
   if (loading) {
     return (
@@ -64,7 +64,7 @@ const Courses = () => {
     }
 
     try {
-      const { data } = await axiosClient.post("/courses/enrollments", {
+      await axiosClient.post("/courses/enrollments", {
         courseId,
       });
 
@@ -74,7 +74,7 @@ const Courses = () => {
         text: "You have been successfully enrolled in the course.",
       });
 
-      console.log("Enrollment data:", data);
+      //console.log("Enrollment data:", data);
     } catch (error) {
       Swal.fire({
         icon: "error",

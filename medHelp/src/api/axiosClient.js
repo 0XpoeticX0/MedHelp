@@ -3,7 +3,7 @@ import axios from "axios";
 
 // Axios instance
 const axiosClient = axios.create({
-  baseURL: "http://localhost:5000/api",
+  baseURL: "https://med-help-backend-eight.vercel.app/api",
   headers: {
     "Content-Type": "application/json",
   },

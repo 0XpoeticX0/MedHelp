@@ -29,9 +29,9 @@ const HelpSection = () => {
               patient_id,
             });
 
-            console.log(res.data);
+            //console.log(res.data);
 
-            if (res.statusText === "OK") {
+            if (res.data.id) {
               message.success("Location sent successfully.");
               navigate("/waiting-room", {
                 state: {
@@ -79,7 +79,7 @@ const HelpSection = () => {
           Get Help Now
         </Button>
         <Button size="large" className="border-red-500 text-red-500">
-          <Link to="/register">Become a Volunteer</Link>
+          <Link to="/register">Register Today.</Link>
         </Button>
       </Space>
     </div>

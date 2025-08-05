@@ -115,7 +115,7 @@ export const getRunningServicesController = async (req, res) => {
     // Fetch availability from the database
     const result = await getRunningServices(volunteerId);
 
-    console.log(result);
+    //console.log(result);
 
     res.status(200).json(result);
   } catch (error) {

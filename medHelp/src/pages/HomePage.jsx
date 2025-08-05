@@ -9,7 +9,7 @@ const { Title, Text } = Typography;
 const HomePage = () => {
   return (
     <div className="">
-      <Content className={`bg-[url('./banner1.jpg')] bg-cover bg-center py-16`}>
+      <Content className={`bg-[url('/banner1.jpg')] bg-cover bg-center py-16`}>
         <HelpSection />
       </Content>
 

@@ -15,7 +15,7 @@ const RunningServices = () => {
     try {
       setLoading(true);
       const response = await axiosClient.get("/help/get-running-services");
-      console.log("API response:", response.data);
+      //console.log("API response:", response.data);
 
       // Assuming response.data is an array or has a structured format
       if (Array.isArray(response.data)) {

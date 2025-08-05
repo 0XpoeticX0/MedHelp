@@ -11,7 +11,7 @@ const ServiceHistory = () => {
     try {
       setLoading(true);
       const response = await axiosClient.get("/help/services/history");
-      console.log("API response:", response.data);
+      // console.log("API response:", response.data);
 
       // Assuming response.data is an array or has a structured format
       if (Array.isArray(response.data)) {
@@ -38,7 +38,7 @@ const ServiceHistory = () => {
     fetchServiceHistory();
   }, []);
 
-  console.log(services);
+  //console.log(services);
 
   const columns = [
     {

@@ -183,7 +183,7 @@ export const getAvailableCourseForCertificate = async (volunteerId) => {
 
   try {
     const [rows] = await db.execute(query, [volunteerId]);
-    console.log(rows);
+    //console.log(rows);
 
     return rows;
   } catch (error) {

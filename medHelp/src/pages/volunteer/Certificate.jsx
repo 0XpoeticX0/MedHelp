@@ -90,6 +90,8 @@ const Certificate = () => {
                 </p>
                 <Button
                   icon={<Download />}
+                  variant="outlined"
+                  type="primary"
                   onClick={() => generateCertificate(course)}
                 >
                   Download Certificate

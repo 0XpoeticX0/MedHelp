@@ -194,7 +194,7 @@ export const getHelpById = async (helpId) => {
 
 export const getRunningServices = async (volunteerId) => {
   try {
-    console.log("Fetching running services for volunteer:", volunteerId);
+    // console.log("Fetching running services for volunteer:", volunteerId);
 
     const [services] = await db.query(
       `SELECT * FROM helps WHERE volunteer_id = ? AND status = 'assigned'`,
@@ -205,7 +205,7 @@ export const getRunningServices = async (volunteerId) => {
       return { message: "No running services." };
     }
 
-    console.log(services);
+    // console.log(services);
 
     return services;
   } catch (error) {
@@ -215,7 +215,7 @@ export const getRunningServices = async (volunteerId) => {
 };
 
 export const getServiceHistory = async (volunteerId) => {
-  console.log("Fetching service history for volunteer:", volunteerId);
+  //console.log("Fetching service history for volunteer:", volunteerId);
   try {
     const [history] = await db.query(
       `SELECT * FROM helps WHERE volunteer_id = ? AND status = 'completed'`,

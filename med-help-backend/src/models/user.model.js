@@ -36,7 +36,7 @@ export const createUser = async (req) => {
   try {
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 12);
-    console.log({ password });
+    //console.log({ password });
 
     const userId = generateId();
 
@@ -60,9 +60,9 @@ export const createUser = async (req) => {
           userId,
           guest_id,
         ]);
-        console.log(
-          `✅ Updated ${updateResult.affectedRows} help records with new patient_id`
-        );
+        // console.log(
+        //   `✅ Updated ${updateResult.affectedRows} help records with new patient_id`
+        // );
       } catch (updateError) {
         console.error("❌ Error updating helps table:", updateError.message);
         // You might want to decide whether to throw this error or continue

@@ -11,10 +11,11 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors("https://med-help-weld.vercel.app"));
 app.use(express.json());
 
 // Routes
+app.get("/", (req, res) => res.status(200).send("welcome to med help server!"));
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/trainers", trainerRoutes);
